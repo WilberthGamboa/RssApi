@@ -2,5 +2,6 @@ import { IsString } from "class-validator";
 
 export class CreateRssDto {
     @IsString()
-    url: string
+    url: string;
+    name:string;
 }

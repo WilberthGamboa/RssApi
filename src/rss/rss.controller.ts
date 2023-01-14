@@ -1,37 +1,19 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { RssService } from './rss.service';
-import { CreateRssDto } from './dto/create-rss.dto';
+
 import { UpdateRssDto } from './dto/update-rss.dto';
-import * as Parser from 'rss-parser';
+
+import { CreateRssDto } from './dto/create-rss.dto';
+
 @Controller('rss')
 export class RssController {
   constructor(private readonly rssService: RssService) {}
 
   @Post()
-  async create(@Body() createRssDto: CreateRssDto) {
+  async create(@Body() createRssDtoDB: CreateRssDto) {
     
 
-    
-const parser = new Parser();
-
-async function fetchRssFeed(feedUrl: string) {
-  try {
-    const feed = await parser.parseURL(feedUrl);
-    console.log(feed.title);
-    /*
-    feed.items.forEach(item => {
-      console.log(item.title + ':' + item.link)
-    });
-    */
-   return feed.title
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-const title = await fetchRssFeed('https://www.xataka.com.mx/feedburner.xml');
-    return title;
-    //return this.rssService.create(createRssDto);
+    return this.rssService.create(createRssDtoDB);
   }
 
   @Get()
