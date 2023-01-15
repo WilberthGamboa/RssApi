@@ -14,19 +14,33 @@ export class RssService {
     private readonly rssModel:Model<Rss>
     ){}
   async create(createRssDtoDB: CreateRssDto) {
-    console.log(createRssDtoDB);
+    const rssExiste = await this.rssModel.exists({url:createRssDtoDB.url});
+    if (rssExiste) {
+      throw new BadRequestException("La url ya está registrada");
+    }
+
+    let newRss;
+    //Validamos que se pueda crear el rss
     try {
       const parser = new Parser();
       const feed = await parser.parseURL(createRssDtoDB.url);
-      createRssDtoDB.name=feed.title;
-      const rssCreado = await this.rssModel.create(createRssDtoDB);
-      console.log(rssCreado)
-      return rssCreado;
+      newRss = feed;
       
     } catch (error) {
       console.log(error)
       throw new BadRequestException('Url no válida');
     }
+   
+    try {
+      const rssCreado = await this.rssModel.create(createRssDtoDB);
+      return rssCreado;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException("SE NOS CAE EL SERVER ")
+
+    }
+
+    
       
   
 
