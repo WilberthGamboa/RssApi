@@ -1,7 +1,9 @@
-import { IsString } from "class-validator";
+/* eslint-disable prettier/prettier */
+import { IsArray, IsString, IsUrl } from "class-validator";
 
 export class CreateRssDto {
-    @IsString()
-    url: string;
+    @IsArray()
+    @IsUrl()
+    url: Array<string>;
     name:string;
 }

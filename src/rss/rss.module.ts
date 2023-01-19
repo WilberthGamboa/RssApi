@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { RssService } from './rss.service';
 import { RssController } from './rss.controller';

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RssService } from './rss.service';
 
 import { UpdateRssDto } from './dto/update-rss.dto';
@@ -11,8 +20,6 @@ export class RssController {
 
   @Post()
   async create(@Body() createRssDtoDB: CreateRssDto) {
-    
-
     return this.rssService.create(createRssDtoDB);
   }
 
