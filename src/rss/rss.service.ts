@@ -13,25 +13,21 @@ export class RssService {
     private readonly rssModel: Model<Rss>,
   ) {}
   async create(createRssDtoDB: CreateRssDto) {
-    const urlValidas: Array<string> = [];
     const urlRegistradasDB: Array<string> = [];
-
-    createRssDtoDB.url.map(async (urlActual)=>{
-      const rssExiste = await this.rssModel.exists({ url: urlActual });
-    
+    const promises = createRssDtoDB.url.map(async (urlActual)=>{
+    const rssExiste = await this.rssModel.exists({ url: urlActual });
+    console.log(rssExiste)
     if (rssExiste) {
-      //throw new BadRequestException('La url ya está registrada');
       urlRegistradasDB.push(urlActual);
-    }else{
-      urlValidas.push(urlActual);
     }
-      
-    })
+    });
+    await Promise.all(promises);
 
     if (urlRegistradasDB) {
-      
-      
+      throw new BadRequestException(urlRegistradasDB,'Url ya registradas');
     }
+
+    
     /*
     const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
     if (rssExiste) {

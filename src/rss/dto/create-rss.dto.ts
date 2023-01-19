@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { IsArray, IsString, IsUrl } from "class-validator";
+import { ArrayNotEmpty, ArrayUnique, IsArray, IsString, IsUrl } from "class-validator";
 
 export class CreateRssDto {
     @IsArray()
-    @IsUrl()
+    @ArrayNotEmpty()
+    @ArrayUnique()
+    @IsUrl({}, { each: true })
     url: Array<string>;
     name:string;
 }
