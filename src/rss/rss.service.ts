@@ -16,19 +16,22 @@ export class RssService {
    
     
     const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
+    console.log(rssExiste)
     if (rssExiste) {
       throw new BadRequestException('La url ya está registrada');
     }
 
-    let newRss;
+    
     //Validamos que se pueda crear el rss
+    
     try {
       const parser = new Parser();
       const feed = await parser.parseURL(createRssDtoDB.url);
-      newRss = feed;
+      createRssDtoDB.name=feed.title;
+      
     } catch (error) {
       console.log(error);
-      throw new BadRequestException('Url no válida');
+      throw new BadRequestException(`${createRssDtoDB.url} no válida por el parser`);
     }
 
     try {
