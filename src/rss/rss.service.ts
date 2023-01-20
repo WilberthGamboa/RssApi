@@ -13,22 +13,8 @@ export class RssService {
     private readonly rssModel: Model<Rss>,
   ) {}
   async create(createRssDtoDB: CreateRssDto) {
-    const urlRegistradasDB: Array<string> = [];
-    const promises = createRssDtoDB.url.map(async (urlActual)=>{
-    const rssExiste = await this.rssModel.exists({ url: urlActual });
-    console.log(rssExiste)
-    if (rssExiste) {
-      urlRegistradasDB.push(urlActual);
-    }
-    });
-    await Promise.all(promises);
-
-    if (urlRegistradasDB) {
-      throw new BadRequestException(urlRegistradasDB,'Url ya registradas');
-    }
-
+   
     
-    /*
     const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
     if (rssExiste) {
       throw new BadRequestException('La url ya está registrada');
@@ -52,7 +38,7 @@ export class RssService {
       console.log(error);
       throw new BadRequestException('SE NOS CAE EL SERVER ');
     }
-    */
+   
   }
 
   findAll() {
