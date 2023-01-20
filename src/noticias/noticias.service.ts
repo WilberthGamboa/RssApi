@@ -5,7 +5,7 @@ import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 @Injectable()
 export class NoticiasService {
   create(createNoticiaDto: CreateNoticiaDto) {
-    return 'This action adds a new noticia';
+    createNoticiaDto.rss
   }
 
   findAll() {
