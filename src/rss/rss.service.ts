@@ -37,7 +37,7 @@ export class RssService {
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
      feed.items.forEach(item => {
-       this.noticiasService.create(item);
+      a this.noticiasService.create(item);
     });
     } catch (error) {
       console.log(error);
