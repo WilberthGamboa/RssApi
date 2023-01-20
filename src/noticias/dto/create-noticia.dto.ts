@@ -1,9 +1,10 @@
 export class CreateNoticiaDto {
   // idXml: any;
-  rss: any;
+  titulo: string;
   fecha:string;
   url:string; 
-  descripcion:string
+  descripcion:string;
+  categorias:Array<string>;
   /*
    fecha, título, url, descripción y categorías.
 

@@ -38,8 +38,13 @@ export class RssService {
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
      const noticiasExample = new CreateNoticiaDto;
+     noticiasExample.url= createRssDtoDB.url;
      feed.items.map(item => {
-      noticiasExample.rss=item;
+      noticiasExample.titulo = item.title;
+      noticiasExample.fecha = item.fecha;
+      noticiasExample.categorias = item.categories;
+      noticiasExample.descripcion = item.summary;
+      
       this.noticiasService.create(noticiasExample);
       
     });
