@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as Parser from 'rss-parser';
+import { CreateNoticiaDto } from 'src/noticias/dto/create-noticia.dto';
 import { NoticiasService } from 'src/noticias/noticias.service';
 import { CreateRssDto } from './dto/create-rss.dto';
 import { UpdateRssDto } from './dto/update-rss.dto';
@@ -36,9 +37,17 @@ export class RssService {
     try {
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
-     feed.items.forEach(item => {
-      a this.noticiasService.create(item);
+     const noticiasExample = new CreateNoticiaDto;
+     feed.items.map(item => {
+      noticiasExample.rss=item;
+      this.noticiasService.create(noticiasExample);
+      
     });
+    /*
+    noticiasExample.rss=feed;
+    this.noticiasService.create(noticiasExample);
+    return "xd";
+    */
     } catch (error) {
       console.log(error);
       throw new BadRequestException('SE NOS CAE EL SERVER ');
