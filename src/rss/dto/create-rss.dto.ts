@@ -2,7 +2,7 @@
 import { ArrayNotEmpty, ArrayUnique, IsArray, IsString, IsUrl } from "class-validator";
 import { Rss } from "../entities/rss.entity";
 
-export class CreateRssDto extends Rss {
+export class CreateRssDto {
     @IsString()
     @IsUrl()
     url: string;

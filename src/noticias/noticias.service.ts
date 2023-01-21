@@ -1,11 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
+import { Noticia } from './entities/noticia.entity';
 
 @Injectable()
 export class NoticiasService {
-  create(createNoticiaDto: CreateNoticiaDto) {
-    
+  constructor(
+    @InjectModel(Noticia.name)
+    private readonly noticiaModel:Model<Noticia>
+  
+  
+  ){}
+
+  async create(createNoticiaDto: CreateNoticiaDto) {
+   // console.log(createNoticiaDto)
+    try {
+      //await this.noticiaModel.create(createNoticiaDto);
+      console.log(createNoticiaDto)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   findAll() {

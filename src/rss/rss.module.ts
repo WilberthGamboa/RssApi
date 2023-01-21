@@ -5,16 +5,21 @@ import { RssController } from './rss.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Rss, RssSchema } from './entities/rss.entity';
 import { NoticiasService } from 'src/noticias/noticias.service';
+import { Noticia, NoticiasSchema } from 'src/noticias/entities/noticia.entity';
 
 
 @Module({
-  controllers: [RssController,NoticiasService],
-  providers: [RssService],
+  controllers: [RssController],
+  providers: [RssService,NoticiasService],
   imports:[
     MongooseModule.forFeature([
       {
         name:Rss.name,
         schema:RssSchema
+      },
+      {
+        name:Noticia.name,
+        schema:NoticiasSchema
       }
     ])
   ]
