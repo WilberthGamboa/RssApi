@@ -17,14 +17,18 @@ export class NoticiasService {
   async create(createNoticiaDto: CreateNoticiaDto) {
    // console.log(createNoticiaDto)
     try {
-      await this.noticiaModel.create(createNoticiaDto);
+      const x = await this.noticiaModel.create(createNoticiaDto);
+      console.log("dto");
       console.log(createNoticiaDto)
+      console.log("dto");
+      console.log(x);
     } catch (error) {
       console.log(error);
     }
   }
 
   findAll() {
+    
     return `This action returns all noticias`;
   }
 

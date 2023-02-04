@@ -5,12 +5,12 @@ import { Rss } from 'src/rss/entities/rss.entity';
 @Schema()
 export class Noticia extends Document{
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Rss' })
-    rss:Rss
+    idRss:Rss
     @Prop({
         
         index:true
     })
-    name:string;
+    titulo:string;
     @Prop({
         
         index:true

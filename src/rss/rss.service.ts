@@ -16,22 +16,22 @@ export class RssService {
     private readonly noticiasService: NoticiasService
   ) {}
   async create(createRssDtoDB: CreateRssDto) {
-
-    /*
+    //Validar si existe la url está registrado
     const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
-    console.log(rssExiste)
     if (rssExiste) {
       throw new BadRequestException('La url ya está registrada');
     }
-    */
-    
+
     //Validamos que se pueda crear el rss
     
     try {
+      //Se crea el objeto Parser y se parsea
       const parser = new Parser();
       const feed = await parser.parseURL(createRssDtoDB.url);
+      //guardamos el title en el dto
       createRssDtoDB.name=feed.title;
-      const modeloEjemplo = await this.rssModel.create(createRssDtoDB)
+      //Creamos el objeto
+      const rssCreado = await this.rssModel.create(createRssDtoDB)
 
       //creamos el objet
     try {
@@ -40,9 +40,7 @@ export class RssService {
      // this.noticiasService.create(feed);
      const noticiasExample = new CreateNoticiaDto();
      feed.items.map(item => {
-    
-      
-      noticiasExample.id=modeloEjemplo.id;
+      noticiasExample.idRss=rssCreado.id;
       noticiasExample.titulo = item.title;
       noticiasExample.fecha = item.pubDate
       noticiasExample.categorias = item.categories;
@@ -52,11 +50,7 @@ export class RssService {
       
       
     });
-    /*
-    noticiasExample.rss=feed;
-    this.noticiasService.create(noticiasExample);
-    return "xd";
-    */
+    
   
     } catch (error) {
       console.log(error);
@@ -65,7 +59,7 @@ export class RssService {
 
 
 
-
+    return rssCreado;
       
     } catch (error) {
       console.log(error);
@@ -79,7 +73,8 @@ export class RssService {
     return `This action returns all rss`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
+    this.noticiasService.findAll();
     return `This action returns a #${id} rss`;
   }
 
