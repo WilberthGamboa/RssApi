@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
+import { PaginationDto } from './dto/paginationDto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 import { Noticia } from './entities/noticia.entity';
 
@@ -27,7 +28,21 @@ export class NoticiasService {
     }
   }
 
-  findAll() {
+  findAll(paginationDto:PaginationDto) {
+    //FECHA NUEVA 
+    const prueba = paginationDto.fecha
+    const x = new Date(prueba);
+    console.log(paginationDto.fecha)
+    console.log(x.toLocaleDateString());
+
+        const fechaActual=new Date().toLocaleDateString();
+    console.log(fechaActual)
+  //  console.log(fechaActual)
+    const noticias = this.noticiaModel.find({
+      fecha:fechaActual
+
+    });
+    return noticias;
     
     return `This action returns all noticias`;
   }

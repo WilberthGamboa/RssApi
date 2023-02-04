@@ -42,7 +42,9 @@ export class RssService {
      feed.items.map(item => {
       noticiasExample.idRss=rssCreado.id;
       noticiasExample.titulo = item.title;
-      noticiasExample.fecha = item.pubDate
+      //cambiamos la fecha
+      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
+      noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
       noticiasExample.descripcion = item.summary;
       noticiasExample.url= item.guid;
@@ -74,7 +76,7 @@ export class RssService {
   }
 
   findOne(id: string) {
-    this.noticiasService.findAll();
+   // this.noticiasService.findAll();
     return `This action returns a #${id} rss`;
   }
 
