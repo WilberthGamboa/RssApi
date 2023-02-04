@@ -17,13 +17,13 @@ export class RssService {
   ) {}
   async create(createRssDtoDB: CreateRssDto) {
 
-    
+    /*
     const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
     console.log(rssExiste)
     if (rssExiste) {
       throw new BadRequestException('La url ya está registrada');
     }
-
+    */
     
     //Validamos que se pueda crear el rss
     
@@ -31,17 +31,18 @@ export class RssService {
       const parser = new Parser();
       const feed = await parser.parseURL(createRssDtoDB.url);
       createRssDtoDB.name=feed.title;
-
+      const modeloEjemplo = await this.rssModel.create(createRssDtoDB)
 
       //creamos el objet
     try {
+
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
      const noticiasExample = new CreateNoticiaDto();
-     
      feed.items.map(item => {
     
-      console.log(item.categories)
+      
+      noticiasExample.id=modeloEjemplo.id;
       noticiasExample.titulo = item.title;
       noticiasExample.fecha = item.pubDate
       noticiasExample.categorias = item.categories;
@@ -49,13 +50,14 @@ export class RssService {
       noticiasExample.url= item.guid;
       this.noticiasService.create(noticiasExample);
       
+      
     });
     /*
     noticiasExample.rss=feed;
     this.noticiasService.create(noticiasExample);
     return "xd";
     */
-   return "listo we"
+  
     } catch (error) {
       console.log(error);
       throw new BadRequestException('SE NOS CAE EL SERVER ');

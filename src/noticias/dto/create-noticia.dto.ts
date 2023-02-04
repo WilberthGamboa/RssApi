@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
+
 export class CreateNoticiaDto {
-  // idXml: any;
+   id: mongoose.Schema.Types.ObjectId;
   titulo: string;
   fecha:string;
   url:string; 

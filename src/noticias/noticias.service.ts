@@ -17,7 +17,7 @@ export class NoticiasService {
   async create(createNoticiaDto: CreateNoticiaDto) {
    // console.log(createNoticiaDto)
     try {
-      //await this.noticiaModel.create(createNoticiaDto);
+      await this.noticiaModel.create(createNoticiaDto);
       console.log(createNoticiaDto)
     } catch (error) {
       console.log(error);

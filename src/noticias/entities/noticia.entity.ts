@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { Rss } from 'src/rss/entities/rss.entity';
 
 @Schema()
 export class Noticia extends Document{
-
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Rss' })
+    rss:Rss
     @Prop({
         
         index:true
