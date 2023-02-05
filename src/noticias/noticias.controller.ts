@@ -17,8 +17,8 @@ export class NoticiasController {
   findAll(@Query() paginationDto:PaginationDto) {
     
    
-    this.noticiasService.findAll(paginationDto);
-    return "xd"
+    
+    return this.noticiasService.findAll(paginationDto);
   }
 
   @Get(':id')

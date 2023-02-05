@@ -29,19 +29,17 @@ export class NoticiasService {
   }
 
   findAll(paginationDto:PaginationDto) {
-    //FECHA NUEVA 
-    const prueba = paginationDto.fecha
-    const x = new Date(prueba);
-    console.log(paginationDto.fecha)
-    console.log(x.toLocaleDateString());
 
-        const fechaActual=new Date().toLocaleDateString();
-    console.log(fechaActual)
-  //  console.log(fechaActual)
+    const {fecha = new Date().toLocaleDateString(),desde=0,limite=5} =paginationDto;
+
     const noticias = this.noticiaModel.find({
-      fecha:fechaActual
+      fecha:fecha
 
-    });
+    })
+    .skip(desde)
+    .limit(limite)
+  
+    
     return noticias;
     
     return `This action returns all noticias`;
