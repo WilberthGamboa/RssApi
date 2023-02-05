@@ -20,6 +20,27 @@ export class NoticiasController {
     
     return this.noticiasService.findAll(paginationDto);
   }
+  @Get('/fecha')
+  findAllFecha(@Query() paginationDto:PaginationDto){
+
+    return this.noticiasService.findAllFecha(paginationDto);
+
+  }
+  @Get('/url')
+  findAllUrl(@Query() paginationDto:PaginationDto){
+    return this.noticiasService.findAllUrl(paginationDto);
+
+  }
+
+  @Get('/titulo')
+  findAllTitulo(@Query() paginationDto:PaginationDto){
+    return this.noticiasService.findAllTitulo(paginationDto);
+  }
+  @Get('/box')
+  findAllBox(@Query() paginationDto:PaginationDto){
+    return this.noticiasService.findAllBox(paginationDto);
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

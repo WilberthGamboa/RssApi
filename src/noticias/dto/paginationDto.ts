@@ -4,6 +4,10 @@ export class PaginationDto{
     @IsDateString()
     @IsOptional()
     fecha?:Date;
+    @IsOptional()
     desde?:number;
+    @IsOptional()
     limite?:number;
+    @IsOptional()
+    busqueda?:string;
 }

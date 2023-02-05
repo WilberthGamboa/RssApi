@@ -29,25 +29,68 @@ export class NoticiasService {
   }
 
   findAll(paginationDto:PaginationDto) {
-
     const {fecha = new Date().toLocaleDateString(),desde=0,limite=5} =paginationDto;
-
     const noticias = this.noticiaModel.find({
-      
-
     })
    // .sort({fecha:-1})
     //.sort({url:-1})
    //.sort({titulo:1})
     .skip(desde)
     .limit(limite)
-  
-    
     return noticias;
-    
-    return `This action returns all noticias`;
   }
 
+  findAllFecha(paginationDto:PaginationDto) {
+    const {fecha = new Date().toLocaleDateString(),desde=0,limite=5,busqueda=''} =paginationDto;
+    const busquedaRegex = new RegExp(busqueda);
+    const noticias = this.noticiaModel.find({
+      titulo:busquedaRegex
+    })
+   .sort({fecha:-1})
+    //.sort({url:-1})
+   //.sort({titulo:1})
+    .skip(desde)
+    .limit(limite)
+    return noticias;
+  }
+  findAllUrl(paginationDto:PaginationDto) {
+    const {fecha = new Date().toLocaleDateString(),desde=0,limite=5} =paginationDto;
+    const noticias = this.noticiaModel.find({
+    })
+   // .sort({fecha:-1})
+    .sort({url:-1})
+   //.sort({titulo:1})
+    .skip(desde)
+    .limit(limite)
+    return noticias;
+  }
+
+  findAllTitulo(paginationDto:PaginationDto) {
+    const {fecha = new Date().toLocaleDateString(),desde=0,limite=5} =paginationDto;
+    const noticias = this.noticiaModel.find({
+    })
+   // .sort({fecha:-1})
+    //.sort({url:-1})
+   .sort({titulo:1})
+    .skip(desde)
+    .limit(limite)
+    return noticias;
+  }
+
+  findAllBox(paginationDto:PaginationDto) {
+    const {fecha = new Date().toLocaleDateString(),desde=0,limite=5,busqueda=''} =paginationDto;
+    const busquedaRegex = new RegExp(busqueda);
+    const noticias = this.noticiaModel.find({
+      titulo:busquedaRegex
+    })
+   // .sort({fecha:-1})
+    //.sort({url:-1})
+   .sort({titulo:1})
+    .skip(desde)
+    .limit(limite)
+    return noticias;
+  }
+  
   findOne(id: number) {
     return `This action returns a #${id} noticia`;
   }
