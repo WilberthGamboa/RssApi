@@ -32,6 +32,12 @@ export class RssController {
   findOne(@Param('id') id: string) {
     return this.rssService.findOne(id);
   }
+  @Patch()
+  updateAll(){
+    this.rssService.updateAll();
+    
+    return "ya";
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRssDto: UpdateRssDto) {

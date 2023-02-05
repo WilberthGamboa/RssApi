@@ -87,4 +87,34 @@ export class RssService {
   remove(id: number) {
     return `This action removes a #${id} rss`;
   }
+
+  async updateAll(){
+    const rss = await this.rssModel.find();
+    rss.map(async actual =>{
+      const parser = new Parser();
+      const feed = await parser.parseURL(actual.url);
+      
+      feed.items.map( item=>{
+        const noticiasExample = new CreateNoticiaDto();
+        noticiasExample.idRss=actual.id;
+      noticiasExample.titulo = item.title;
+      //cambiamos la fecha
+      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
+      noticiasExample.fecha = formatoFecha
+      noticiasExample.categorias = item.categories;
+      noticiasExample.descripcion = item.summary;
+      noticiasExample.url= item.guid;
+      //console.log(noticiasExample)
+      this.noticiasService.create(noticiasExample);
+    
+    
+
+      })
+    })
+    
+  
+
+  }
+
+
 }
