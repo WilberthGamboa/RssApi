@@ -33,9 +33,12 @@ export class NoticiasService {
     const {fecha = new Date().toLocaleDateString(),desde=0,limite=5} =paginationDto;
 
     const noticias = this.noticiaModel.find({
-      fecha:fecha
+      
 
     })
+   // .sort({fecha:-1})
+    //.sort({url:-1})
+   //.sort({titulo:1})
     .skip(desde)
     .limit(limite)
   
