@@ -32,14 +32,15 @@ export class RssService {
       createRssDtoDB.name=feed.title;
       //Creamos el objeto
       const rssCreado = await this.rssModel.create(createRssDtoDB)
-
+      
       //creamos el objet
     try {
 
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
-     const noticiasExample = new CreateNoticiaDto();
-     feed.items.map(item => {
+     
+     feed.items.map(async item => {
+      const noticiasExample = new CreateNoticiaDto();
       noticiasExample.idRss=rssCreado.id;
       noticiasExample.titulo = item.title;
       //cambiamos la fecha

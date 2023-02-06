@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,8 +20,9 @@ export class NoticiasService {
    // console.log(createNoticiaDto)
     try {
       const existe = await this.noticiaModel.exists({createNoticiaDto});
-      console.log(existe)
+     
      if (existe===null) {
+      console.log(createNoticiaDto);
       await this.noticiaModel.create(createNoticiaDto);
       
      }
