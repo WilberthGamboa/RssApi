@@ -1,7 +1,16 @@
 //ENDPOINTS
+POST: https://rssapi-production.up.railway.app/rss
+MANDAR POST CON LA URL
+PATCH: https://rssapi-production.up.railway.app/rss
+Lo invocas y actualiza todas las noticas
 
 
+//GET 
+https://rssapi-production.up.railway.app/noticias/fecha
+https://rssapi-production.up.railway.app/noticias/url
+https://rssapi-production.up.railway.app/noticias/titulo
 
+QUERY PARAMS limite busqueda desde
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
