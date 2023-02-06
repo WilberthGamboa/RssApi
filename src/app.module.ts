@@ -4,12 +4,14 @@ import { AppService } from './app.service';
 import { RssModule } from './rss/rss.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { NoticiasModule } from './noticias/noticias.module';
 
 
 @Module({
   imports: [RssModule,
   ConfigModule.forRoot(),
-  MongooseModule.forRoot(process.env.DB_MONGO)
+  MongooseModule.forRoot(process.env.DB_MONGO),
+  NoticiasModule
   
   ],
   controllers: [AppController],
