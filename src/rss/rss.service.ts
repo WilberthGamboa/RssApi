@@ -44,17 +44,21 @@ export class RssService {
       noticiasExample.idRss=rssCreado.id;
       noticiasExample.titulo = item.title;
       //cambiamos la fecha
-      noticiasExample.descripcion = item.summary;
       const formatoFecha = new Date(item.pubDate).toLocaleDateString();
-      noticiasExample.fecha = formatoFecha;
+      noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
-      noticiasExample.html2 = item.contentSnippet;
-      console.log(item.content);
+
+      if(item.summary===undefined){
+        noticiasExample.descripcion = item.contentSnippet;
+      }else{
+        noticiasExample.descripcion = item.summary;
+      }
+     
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
-    
-      
-     
+      noticiasExample.html2 = item.contentSnippet;
+      //console.log(item.content);
+
       this.noticiasService.create(noticiasExample);
       
       
@@ -110,7 +114,7 @@ export class RssService {
       noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
       noticiasExample.descripcion = item.summary;
-      noticiasExample.url= item.guid;
+      noticiasExample.url= item.url;
       noticiasExample.html= item.content;
       //console.log(noticiasExample)
       this.noticiasService.create(noticiasExample);
