@@ -52,7 +52,7 @@ export class NoticiasService {
 
   findAllFecha(paginationDto:PaginationDto) {
     const {fecha = new Date().toLocaleDateString(),desde=0,limite=5,busqueda=''} =paginationDto;
-    const busquedaRegex = new RegExp(busqueda);
+    const busquedaRegex = new RegExp(busqueda,"i");
     const noticias = this.noticiaModel.find({
       titulo:busquedaRegex
     })
@@ -89,7 +89,7 @@ export class NoticiasService {
 
   findAllBox(paginationDto:PaginationDto) {
     const {fecha = new Date().toLocaleDateString(),desde=0,limite=5,busqueda=''} =paginationDto;
-    const busquedaRegex = new RegExp(busqueda);
+    const busquedaRegex = new RegExp(busqueda,"i");
     const noticias = this.noticiaModel.find({
       titulo:busquedaRegex
     })
