@@ -51,7 +51,7 @@ export class RssService {
       console.log(item.summary);
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
-     noticiasExample.html2 = item.contentSnippet.toString();
+     noticiasExample.html2 = item.contentSnippet;
       
      
       this.noticiasService.create(noticiasExample);
