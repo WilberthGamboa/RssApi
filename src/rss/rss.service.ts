@@ -107,6 +107,7 @@ export class RssService {
       noticiasExample.categorias = item.categories;
       noticiasExample.descripcion = item.summary;
       noticiasExample.url= item.guid;
+      noticiasExample.html= item.content;
       //console.log(noticiasExample)
       this.noticiasService.create(noticiasExample);
     
