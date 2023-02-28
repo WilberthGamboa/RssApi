@@ -48,7 +48,7 @@ export class RssService {
       const formatoFecha = new Date(item.pubDate).toLocaleDateString();
       noticiasExample.fecha = formatoFecha;
       noticiasExample.categorias = item.categories;
-      console.log(item.summary);
+   
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
      noticiasExample.html2 = item.contentSnippet;
