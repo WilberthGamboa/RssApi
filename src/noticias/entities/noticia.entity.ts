@@ -40,7 +40,7 @@ export class Noticia extends Document{
         index:true
         
     })
-    html2:string
+    html2:string;
 
      /*
    fecha, título, url, descripción y categorías.

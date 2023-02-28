@@ -44,13 +44,15 @@ export class RssService {
       noticiasExample.idRss=rssCreado.id;
       noticiasExample.titulo = item.title;
       //cambiamos la fecha
-      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
-      noticiasExample.fecha = formatoFecha
-      noticiasExample.categorias = item.categories;
       noticiasExample.descripcion = item.summary;
+      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
+      noticiasExample.fecha = formatoFecha;
+      noticiasExample.categorias = item.categories;
+      
       noticiasExample.url=  item.link;
-      noticiasExample.html= item.content;
-      noticiasExample.html2 = item.contentSnippet;
+      noticiasExample.html= item.content.toString();
+    //  noticiasExample.html2 = item.contentSnippet.toString();
+      
       console.log(item.content);
       this.noticiasService.create(noticiasExample);
       
