@@ -7,6 +7,7 @@ export class CreateNoticiaDto {
   url:string; 
   descripcion:string;
   categorias:Array<string>;
+  html:string;
   /*
    fecha, título, url, descripción y categorías.
 
