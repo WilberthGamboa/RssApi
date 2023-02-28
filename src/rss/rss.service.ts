@@ -48,8 +48,9 @@ export class RssService {
       noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
       noticiasExample.descripcion = item.summary;
-      noticiasExample.url= item.guid;
+      noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
+      noticiasExample.html2 = item.contentSnippet;
       console.log(item.content);
       this.noticiasService.create(noticiasExample);
       

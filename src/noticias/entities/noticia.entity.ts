@@ -31,6 +31,16 @@ export class Noticia extends Document{
         
     })
     categorias:Array<string>;
+    @Prop({
+        index:true
+        
+    })
+    html:string;
+    @Prop({
+        index:true
+        
+    })
+    html2:string
 
      /*
    fecha, título, url, descripción y categorías.
