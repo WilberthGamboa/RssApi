@@ -48,12 +48,12 @@ export class RssService {
       const formatoFecha = new Date(item.pubDate).toLocaleDateString();
       noticiasExample.fecha = formatoFecha;
       noticiasExample.categorias = item.categories;
-      
+      console.log(item.summary);
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content.toString();
     //  noticiasExample.html2 = item.contentSnippet.toString();
       
-      console.log(item.content);
+     
       this.noticiasService.create(noticiasExample);
       
       
