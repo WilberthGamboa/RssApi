@@ -20,7 +20,8 @@ export class NoticiasService {
    // console.log(createNoticiaDto)
     try {
       const existe = await this.noticiaModel.exists({createNoticiaDto});
-     
+      await this.noticiaModel.create(createNoticiaDto);
+     /*
      if (existe===null) {
       console.log(createNoticiaDto);
       await this.noticiaModel.create(createNoticiaDto);
