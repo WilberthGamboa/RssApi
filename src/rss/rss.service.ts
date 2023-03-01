@@ -47,10 +47,10 @@ export class RssService {
       const formatoFecha = new Date(item.pubDate).toLocaleDateString();
       noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
-      noticiasExample.descripcion = item.summary;
+      
       
       if(item.summary===undefined){
-        noticiasExample.descripcion = item.contentSnippet;
+        noticiasExample.descripcion = "Sin contenido";
       }else{
         noticiasExample.descripcion = item.summary;
       }
@@ -58,7 +58,7 @@ export class RssService {
      
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
-      noticiasExample.html2 = item.contentSnippet;
+      noticiasExample.html2 = feed.image.url;
       //console.log(item.content);
 
       this.noticiasService.create(noticiasExample);
