@@ -44,9 +44,9 @@ export class RssController {
     return this.rssService.update(+id, updateRssDto);
   }
 
-  @Delete(':id')
+  @Delete('')
   remove() {
     return this.rssService.remove();
   }
-  
+
 }

@@ -54,6 +54,6 @@ export class NoticiasController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.noticiasService.remove(+id);
+    return this.noticiasService.remove();
   }
 }
