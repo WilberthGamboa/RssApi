@@ -38,7 +38,7 @@ export class RssService {
 
       //const rssCreado = await this.rssModel.create(createRssDtoDB);
      // this.noticiasService.create(feed);
-     const  x = feed.image.url
+    
      feed.items.map(async item => {
       const noticiasExample = new CreateNoticiaDto();
       noticiasExample.idRss=rssCreado.id;
@@ -58,7 +58,7 @@ export class RssService {
      console.log("xd")
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
-      noticiasExample.html2 = x;
+    //  noticiasExample.html2 = x;
       //console.log(item.content);
 
       this.noticiasService.create(noticiasExample);
