@@ -55,7 +55,7 @@ export class RssService {
         noticiasExample.descripcion = item.summary;
       }
       
-     
+     console.log("xd")
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;
       noticiasExample.html2 = feed.image.url;
