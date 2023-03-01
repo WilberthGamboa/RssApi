@@ -49,7 +49,7 @@ export class RssService {
       noticiasExample.categorias = item.categories;
 
       if(item.summary===undefined){
-        noticiasExample.descripcion = item.contentSnippet;
+        noticiasExample.descripcion = "Sin descripción";
       }else{
         noticiasExample.descripcion = item.summary;
       }
@@ -95,8 +95,10 @@ export class RssService {
     return `This action updates a #${id} rss`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} rss`;
+  async remove() {
+   await this.rssModel.deleteMany({});
+   this.noticiasService.remove();
+   return "base de datos borrada";
   }
 
   async updateAll(){

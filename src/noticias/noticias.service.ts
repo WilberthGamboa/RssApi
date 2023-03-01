@@ -109,7 +109,7 @@ export class NoticiasService {
     return `This action updates a #${id} noticia`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} noticia`;
+  async remove() {
+    await this.noticiaModel.deleteMany({});
   }
 }

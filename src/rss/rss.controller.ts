@@ -45,7 +45,8 @@ export class RssController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rssService.remove(+id);
+  remove() {
+    return this.rssService.remove();
   }
+  
 }
