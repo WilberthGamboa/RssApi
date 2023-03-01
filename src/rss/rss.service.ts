@@ -47,12 +47,14 @@ export class RssService {
       const formatoFecha = new Date(item.pubDate).toLocaleDateString();
       noticiasExample.fecha = formatoFecha
       noticiasExample.categorias = item.categories;
-
+      noticiasExample.descripcion = item.summary;
+      
       if(item.summary===undefined){
-        noticiasExample.descripcion = "Sin descripción";
+        noticiasExample.descripcion = item.contentSnippet;
       }else{
         noticiasExample.descripcion = item.summary;
       }
+      
      
       noticiasExample.url=  item.link;
       noticiasExample.html= item.content;

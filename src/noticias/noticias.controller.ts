@@ -52,8 +52,8 @@ export class NoticiasController {
     return this.noticiasService.update(+id, updateNoticiaDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  
+  remove() {
     return this.noticiasService.remove();
   }
 }
