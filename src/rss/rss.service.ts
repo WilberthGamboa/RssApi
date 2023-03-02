@@ -104,6 +104,7 @@ export class RssService {
   }
 
   async updateAll(){
+    /*
     const rss = await this.rssModel.find();
     rss.map(async actual =>{
       const parser = new Parser();
@@ -127,7 +128,9 @@ export class RssService {
 
       })
     })
-    
+    */
+   const data = await this.rssModel.find({});
+   return data;
   
 
   }

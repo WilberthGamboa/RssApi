@@ -34,9 +34,9 @@ export class RssController {
   }
   @Patch()
   updateAll(){
-    this.rssService.updateAll();
+    return this.rssService.updateAll();
     
-    return "ya";
+    
   }
 
   @Patch(':id')
