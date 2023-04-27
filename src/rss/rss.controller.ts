@@ -7,8 +7,12 @@ import {
   Patch,
   Param,
   Delete,
+  CACHE_MANAGER,
+  Inject,
 } from '@nestjs/common';
 import { RssService } from './rss.service';
+
+import { Cache } from 'cache-manager';
 
 import { UpdateRssDto } from './dto/update-rss.dto';
 
@@ -16,7 +20,7 @@ import { CreateRssDto } from './dto/create-rss.dto';
 
 @Controller('rss')
 export class RssController {
-  constructor(private readonly rssService: RssService) {}
+  constructor(private readonly rssService: RssService,@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
   @Post()
   async create(@Body() createRssDtoDB: CreateRssDto) {
@@ -24,8 +28,19 @@ export class RssController {
   }
 
   @Get()
-  findAll() {
-    return this.rssService.findAll();
+  async findAll() {
+    const key = 'my-key';
+    let data = await this.cache.get(key);
+    if (!data) {
+      const response:any =  this.rssService.findAll();
+      data = response.data;
+      await this.cache.set(key, data, 60);
+
+    }
+    return data;
+
+
+    
   }
 
   @Get(':id')

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, CACHE_MANAGER, Inject } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { NoticiasService } from './noticias.service';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
@@ -6,7 +7,7 @@ import { PaginationDto } from './dto/paginationDto';
 
 @Controller('noticias')
 export class NoticiasController {
-  constructor(private readonly noticiasService: NoticiasService) {}
+  constructor(private readonly noticiasService: NoticiasService,@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
   @Post()
   create(@Body() createNoticiaDto: CreateNoticiaDto) {
@@ -14,11 +15,19 @@ export class NoticiasController {
   }
 
   @Get()
-  findAll(@Query() paginationDto:PaginationDto) {
-    
+  async findAll(@Query() paginationDto:PaginationDto) {
+    const key = 'my-key';
+    let data = await this.cache.get(key);
+    if (!data) {
+      const response:any =  this.noticiasService.findAll(paginationDto);
+      data = response.data;
+      await this.cache.set(key, data, 60);
+
+    }
+    return data;
    
     
-    return this.noticiasService.findAll(paginationDto);
+   
   }
   @Get('/fecha')
   findAllFecha(@Query() paginationDto:PaginationDto){
