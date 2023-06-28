@@ -1,0 +1,26 @@
+https://www.xataka.com.mx/feedburner.xml
+
+ https://feeds.bbci.co.uk/mundo/rss.xml
+
+
+   "title": "BBC Mundo - Noticias",
+    "description": "BBC Mundo - Noticias",
+    "managingEditor": "escribanos@bbc.co.uk",
+    "generator": "RSS for Node",
+    "link": "http://www.bbcmundo.com",
+    "language": "es",
+    "copyright": "Derechos Reservados de la British Broadcasting Corporation (Corporación Británica de Radiodifusión) ",
+    "lastBuildDate": "Wed, 28 Jun 2023 10:11:26 GMT",
+    "ttl": "15"
+
+
+
+    "feedUrl": "https://www.xataka.com.mx/feedburner.xml",
+    "paginationLinks": {
+        "self": "https://www.xataka.com.mx/feedburner.xml"
+    },
+    "title": "Xataka México",
+    "description": "Publicación de noticias sobre gadgets, tecnología, software y videojuegos. Últimas tecnologías en electrónica de consumo y novedades tecnológicas en México.",
+    "pubDate": "Wed, 28 Jun 2023 10:15:53 +0000",
+    "generator": "https://www.xataka.com.mx",
+    "link": "https://www.xataka.com.mx"
