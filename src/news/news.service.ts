@@ -21,7 +21,7 @@ export class NewsService {
   async createMany(createNewsDto: CreateNewsDto[]) {
     const newsInserted = await this.newsModel.insertMany(createNewsDto)
    // console.log(newsInserted)
-    return 'This action adds a new news';
+    return newsInserted;
   }
 
   create(createNewsDto: CreateNewsDto) {

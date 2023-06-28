@@ -11,6 +11,8 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
+import { filtrarStringImg } from './helpers/filtroHtmlImg.helper';
+import { uuidImgGenerator } from './helpers/uuid.helper';
 
 
 
@@ -59,37 +61,44 @@ export class RssService {
 
     */
     try {
-      const rssSaved = await this.rssModel.create(rssData);
+      // Guardamos el url del rss
+    const rssSaved = await this.rssModel.create(rssData);
 
-      function filterImgSrcsFromString(inputString) {
-        const regex = /<img.*?src=["'](.*?)["']/;
-         const match = inputString.match(regex);
-          const src = match ? match[1] : null;
-        return src;
+      // Primero validamos que si está el contentSniped
+      let responseArray;
+      if (test[0].content) {
+          const promiseArray =  test.map (item =>{
+            const imgSrcs = filtrarStringImg(item.content);
+            const response =  firstValueFrom(this.httpService.get(imgSrcs, { responseType: 'arraybuffer' }));
+            return response;
+          })
+         responseArray =  await Promise.all(promiseArray);
+         console.log(responseArray)
       }
-      
-      // Ejemplo de uso
+     
+ 
+      const data = await Promise.all(
+        test.map( (item,index)=>{
+          const imgName = uuidImgGenerator();
+          const filePath =  path.join(process.cwd(),'/src/upload', imgName);
+          try {
+                fs.promises.writeFile(filePath, responseArray[index].data);
+          } catch (error) {
+            
+          }
+        //  console.log('Imagen guardada en disco:', filePath);
    
+          return{
+            ...item,
+            rss : 'rssSaved._id',
+            image:imgName,
+           
+          }
+        })
 
-      const x = test.map(async item=>{
-        const imgSrcs = filterImgSrcsFromString(item.content);
-        console.log(imgSrcs)
-        const response = await firstValueFrom(this.httpService.get(imgSrcs, { responseType: 'arraybuffer' }));
-        console.log(response.data)
-        const filePath =  path.join(process.cwd(), 'nombreImagen.jpg');
-        fs.writeFileSync(filePath, response.data);
-        console.log('Imagen guardada en disco:', filePath);
-   
-        return{
-          ...item,
-          rss : rssSaved._id,
-          content: imgSrcs
-        
-        }
-      })
-    //  console.log(x)
-     await this.newsService.createMany(x);
-      return x;
+      ) 
+ 
+      return await this.newsService.createMany(data);
     } catch (error) {
       if (error.code ===11000) {
         throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);  

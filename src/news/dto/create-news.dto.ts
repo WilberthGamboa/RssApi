@@ -24,6 +24,10 @@ export class CreateNewsDto  {
 
     enclosure?:any;
 
+
+
+    image?:string;
+
     // Referencia al modelo de RSS
     rss: Types.ObjectId;
     

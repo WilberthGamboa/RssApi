@@ -21,6 +21,10 @@ export class News extends Document{
     @Prop()
     isoDate?:        string;
 
+    @Prop()
+    image?:string;
+
+
     @Prop({type:Object})
 
     enclosure?:any;
