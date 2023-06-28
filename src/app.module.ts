@@ -10,8 +10,9 @@ import { NewsModule } from './news/news.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    RssModule,
+    
     MongooseModule.forRoot(process.env.MONGODB),
+    RssModule,
     NewsModule
   
   ],

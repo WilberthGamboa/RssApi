@@ -5,6 +5,12 @@ import * as Parser from 'rss-parser';
 import { InjectModel } from '@nestjs/mongoose';
 import { Rss } from './entities/rss.entity';
 import { Model } from 'mongoose';
+import { RssInterface } from './interface/rss.interface';
+import { NewsService } from 'src/news/news.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import * as fs from 'fs';
+import * as path from 'path';
 
 
 
@@ -13,7 +19,10 @@ export class RssService {
 
   constructor(
     @InjectModel(Rss.name)
-    private readonly rssModel: Model<Rss>
+    private readonly rssModel: Model<Rss>,
+    
+    private readonly newsService : NewsService,
+    private readonly httpService: HttpService
   ){}
   // Empezando
   async create(createRssDto: CreateRssDto) {
@@ -27,10 +36,17 @@ export class RssService {
       }
 
     const parser = new Parser();
-    let rssParser;
-
-    try {
-      rssParser = await parser.parseURL(createRssDto.rssUrl);
+    let rssData:RssInterface;
+      let test;
+      try {
+      const rssParser = await parser.parseURL(createRssDto.rssUrl);
+      const  {items,...rssParserData} = rssParser;
+      rssData = {
+        rssUrl:createRssDto.rssUrl,
+        ...rssParserData
+      }
+     test = items
+     
     
     } catch (error) {
       
@@ -43,8 +59,37 @@ export class RssService {
 
     */
     try {
-      const rssSaved = await this.rssModel.create(createRssDto);
-      return rssParser;
+      const rssSaved = await this.rssModel.create(rssData);
+
+      function filterImgSrcsFromString(inputString) {
+        const regex = /<img.*?src=["'](.*?)["']/;
+         const match = inputString.match(regex);
+          const src = match ? match[1] : null;
+        return src;
+      }
+      
+      // Ejemplo de uso
+   
+
+      const x = test.map(async item=>{
+        const imgSrcs = filterImgSrcsFromString(item.content);
+        console.log(imgSrcs)
+        const response = await firstValueFrom(this.httpService.get(imgSrcs, { responseType: 'arraybuffer' }));
+        console.log(response.data)
+        const filePath =  path.join(process.cwd(), 'nombreImagen.jpg');
+        fs.writeFileSync(filePath, response.data);
+        console.log('Imagen guardada en disco:', filePath);
+   
+        return{
+          ...item,
+          rss : rssSaved._id,
+          content: imgSrcs
+        
+        }
+      })
+    //  console.log(x)
+     await this.newsService.createMany(x);
+      return x;
     } catch (error) {
       if (error.code ===11000) {
         throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);  

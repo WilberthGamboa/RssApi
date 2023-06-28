@@ -11,8 +11,26 @@ export class Rss extends Document {
     rssUrl:string;
 
     //! Implementado 
+    @Prop()
+    title?:string;
 
-    
+    @Prop()
+    description?: string;
+
+    @Prop()
+    feedUrl?: string;
+
+    @Prop({type:Object})
+    image?: any;
+
+    @Prop({type:Object})
+    itunes?: any;
+
+    @Prop()
+    link?: string;
+
+    @Prop({type:Object})
+    paginationLinks?: any;
 
 }
 export const RssSchema = SchemaFactory.createForClass(Rss);
