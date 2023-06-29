@@ -1,8 +1,7 @@
-export interface RssInterface {
+export interface RssMetaData{
     rssUrl:string;
 
     //! Implementado 
-
 
     description?: string;
 
@@ -15,7 +14,6 @@ export interface RssInterface {
 
     itunes?: any;
 
- 
     link?: string;
 
     paginationLinks?:any;
