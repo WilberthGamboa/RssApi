@@ -17,30 +17,19 @@ export class NewsService {
 
   }
 
-
   async createMany(createNewsDto: CreateNewsDto[]) {
     const newsInserted = await this.newsModel.insertMany(createNewsDto)
    // console.log(newsInserted)
     return newsInserted;
   }
 
-  create(createNewsDto: CreateNewsDto) {
-    return 'This action adds a new news';
-  }
-  
   findAll() {
-    return `This action returns all news`;
+    
+    return this.newsModel.find({});
   }
 
   findOne(id: number) {
     return `This action returns a #${id} news`;
   }
 
-  update(id: number, updateNewsDto: UpdateNewsDto) {
-    return `This action updates a #${id} news`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} news`;
-  }
 }
