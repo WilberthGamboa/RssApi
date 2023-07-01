@@ -14,6 +14,7 @@ import * as path from 'path';
 import { filtrarStringImg } from './helpers/filtroHtmlImg.helper';
 import { uuidImgGenerator } from './helpers/uuid.helper';
 import { ImageProcessingServiceHandlerService } from './imageProcessingServiceHandler/imageProcessingServiceHandler.service';
+import { create } from 'domain';
 
 
 
@@ -156,7 +157,7 @@ export class RssService {
 
 
   }
-
+// ! FIUN
   async findAll() {
     const rss = await this.rssModel.find({});
     return rss;
@@ -173,8 +174,130 @@ export class RssService {
 
     return rss;
   }
+// ! UPDATE 
 
-  update() {
+  async update() {
+
+    this.newsService.updateAll()
+    const allrss = await this.rssModel.find({});
+
+    await Promise.all(allrss.map(async (createRssDto)=> {
+
+      const parser = new Parser();
+      let rssMetaData: RssMetaData;
+      let rssItems;
+      
+      try {
+        console.log(createRssDto.link)
+        const rssParser = await parser.parseURL(createRssDto.feedUrl);
+     
+        const { items, ...rssParserData } = rssParser;
+        rssMetaData = {
+          rssUrl: createRssDto.rssUrl,
+          ...rssParserData
+        }
+        rssItems = items;
+  
+  
+      } catch (error) {
+  
+        throw new BadGatewayException('La url introducida no es válida para Rss');
+      }
+     
+      /*
+      Realizamos una segunda validación debido a que puede existir que aunque nosotros realizamos la validación con anterioridad,
+      algún usuario haya insertado un dato, por lo que es importante manejar este error.
+  
+      */
+      try {
+        // Guardamos el url del rss
+        
+  
+        const itemContent = rssItems[0].content;
+      
+        const itemContentImg = filtrarStringImg(rssItems[0].content);
+        // ! Empezamos a validar las img
+        // Primero validamos que si está el contentSniped
+        let responseArray: Array<any> = [];
+  
+        if (itemContent&&itemContentImg) {
+         // this.imageProcessingService.saveImgByHtml()
+       
+          const promiseArray = rssItems.map((rssItem: { content: String; }) => {
+            const rssItemContentFiltered = filtrarStringImg(rssItem.content);
+        
+            const response = firstValueFrom(this.httpService.get(rssItemContentFiltered, { responseType: 'arraybuffer' }));
+            return response;
+          })
+   
+            responseArray = await Promise.all(promiseArray);
+  
+            const rssItemsProcessed = await Promise.all(
+              rssItems.map((item, index:number) => {
+                const imgName = uuidImgGenerator();
+                const filePath = path.join(process.cwd(), '/src/upload', imgName);
+                try {
+                  fs.promises.writeFile(filePath, responseArray[index].data);
+                } catch (error) {
+  
+                }
+                return {
+                  ...item,
+                  rss: createRssDto._id,
+                  image: imgName,
+  
+                }
+              })
+  
+            )
+  
+            return await this.newsService.createMany(rssItemsProcessed);
+          
+  
+        }
+        // !  Imagen por defecto de portada
+  
+        // https://feeds.simplecast.com/54nAGcIl
+   
+        if (rssMetaData.image.url) {
+  
+          const response = await firstValueFrom(this.httpService.get(rssMetaData.image.url, { responseType: 'arraybuffer' }));
+  
+          const imgName = uuidImgGenerator();
+          const filePath = path.join(process.cwd(), '/src/upload', imgName);
+  
+          try {
+            fs.promises.writeFile(filePath, response.data);
+          } catch (error) {
+  
+          }
+  
+          const data = rssItems.map((item) => {
+            return {
+              ...item,
+              rss: createRssDto._id,
+              image: imgName,
+  
+            }
+          })
+  
+       
+  
+          return await this.newsService.createMany(data);
+  
+        }
+  
+  
+  
+      } catch (error) {
+        if (error.code === 11000) {
+          throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);
+        }
+        throw new InternalServerErrorException(`No se logró guardar el rss`);
+      }
+
+    })) 
+   
 
     
   }

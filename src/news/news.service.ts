@@ -5,9 +5,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { News } from './entities/news.entity';
 import { Model, Types } from 'mongoose';
 import * as fs from 'fs'
+
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { NewsPaginationDto } from './dto/newsPagination.dto';
-import { join } from 'path';
+import path, { join } from 'path';
 
 
 @Injectable()
@@ -99,5 +100,33 @@ export class NewsService {
       }
    return this.newsModel.deleteMany({rss:new Types.ObjectId(id)})
   }
+
+  async updateAll(){
+    this.borrarCarpeta(join(process.cwd(),'/src/upload/'));
+    this.crearCarpeta(join(process.cwd(),'/src/upload/'));
+    this.newsModel.deleteMany({})
+
+  }
+  
+   borrarCarpeta = (ruta) => {
+    if (fs.existsSync(ruta)) {
+      fs.readdirSync(ruta).forEach((archivo) => {
+        const archivoRuta = `${ruta}/${archivo}`;
+        if (fs.lstatSync(archivoRuta).isDirectory()) {
+          this.borrarCarpeta(archivoRuta);
+        } else {
+          fs.unlinkSync(archivoRuta);
+        }
+      });
+      fs.rmdirSync(ruta);
+    }
+  };
+  
+  // Función para crear una carpeta
+   crearCarpeta = (ruta) => {
+    if (!fs.existsSync(ruta)) {
+      fs.mkdirSync(ruta);
+    }
+  };
   
 }

@@ -25,7 +25,8 @@ export class RssController {
 
   @Patch()
   update() {
-    return this.rssService.update();
+     this.rssService.update();
+    return 'test'
   }
 
   @Delete(':id')
