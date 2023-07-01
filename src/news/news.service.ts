@@ -21,8 +21,6 @@ export class NewsService {
   ){
 
   }
-
- 
   async findAll(newsPaginationDto:NewsPaginationDto) {
     const {limit = 10, offset = 0,title='',contentSnippet='',creator=''} = newsPaginationDto;
 
@@ -48,8 +46,8 @@ export class NewsService {
         const ejemplo = {
           ...newWithoutImage,
           image:{
-            download :`http://localhost:3000/files/download/${image}`,
-            see : `http://localhost:3000/files/see/${image}`
+            download :`${process.env.URL}files/download/${image}`,
+            see : `${process.env.URL}files/see/${image}`
           }
         }
         return ejemplo;
@@ -99,12 +97,6 @@ export class NewsService {
         });
 
       }
-      
-    
-
-
-
-   
    return this.newsModel.deleteMany({rss:new Types.ObjectId(id)})
   }
   
