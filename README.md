@@ -1,40 +1,52 @@
-//ENDPOINTS
-POST: https://rssapi-production.up.railway.app/rss
-MANDAR POST CON LA URL
-PATCH: https://rssapi-production.up.railway.app/rss
-Lo invocas y actualiza todas las noticas
-
-
-//GET 
-https://rssapi-production.up.railway.app/noticias/fecha
-https://rssapi-production.up.railway.app/noticias/url
-https://rssapi-production.up.railway.app/noticias/titulo
-
-QUERY PARAMS limite busqueda desde
-
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Lista de Rss
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+```
+https://feeds.megaphone.fm/EMPBC2962078635
+
+```
+
+```
+https://podcastfeeds.nbcnews.com/HL4TzgYC
+
+```
+```
+https://rss.art19.com/morbid-a-true-crime-podcast
+
+```
+
+```
+https://feeds.acast.com/public/shows/5ea17537-f11f-4532-8202-294d976b9d5c
+
+```
+```
+https://feeds.megaphone.fm/WWO3519750118
+
+```
+```
+https://feeds.simplecast.com/xWZglpA_
+
+```
+```
+https://feeds.simplecast.com/qm_9xx0g
+
+```
+```
+https://feeds.fireside.fm/bibleinayear/rss
+
+```
+```
+https://feeds.simplecast.com/54nAGcIl
+
+```
+```
+https://rss.art19.com/apology-line
+
+```
+
 
 ## Description
 

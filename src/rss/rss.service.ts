@@ -1,139 +1,317 @@
-/* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import * as Parser from 'rss-parser';
-import { CreateNoticiaDto } from 'src/noticias/dto/create-noticia.dto';
-import { NoticiasService } from 'src/noticias/noticias.service';
+import { BadGatewayException, BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateRssDto } from './dto/create-rss.dto';
 import { UpdateRssDto } from './dto/update-rss.dto';
-import { Rss, RssSchema } from './entities/rss.entity';
+import * as Parser from 'rss-parser';
+import { InjectModel } from '@nestjs/mongoose';
+import { Rss } from './entities/rss.entity';
+import { Model } from 'mongoose';
+import {  RssMetaData } from './interface/rss.interface';
+import { NewsService } from 'src/news/news.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import * as fs from 'fs';
+import * as path from 'path';
+import { filtrarStringImg } from './helpers/filtroHtmlImg.helper';
+import { uuidImgGenerator } from './helpers/uuid.helper';
+import { ImageProcessingServiceHandlerService } from './imageProcessingServiceHandler/imageProcessingServiceHandler.service';
+import { create } from 'domain';
+
+
+
 @Injectable()
 export class RssService {
+
   constructor(
     @InjectModel(Rss.name)
     private readonly rssModel: Model<Rss>,
-    private readonly noticiasService: NoticiasService
-  ) {}
-  async create(createRssDtoDB: CreateRssDto) {
-    //Validar si existe la url está registrado
-    const rssExiste = await this.rssModel.exists({ url: createRssDtoDB.url });
-    if (rssExiste) {
-      throw new BadRequestException('La url ya está registrada');
-    }
 
-    //Validamos que se pueda crear el rss
-    
-    try {
-      //Se crea el objeto Parser y se parsea
-      const parser = new Parser();
-      const feed = await parser.parseURL(createRssDtoDB.url);
-      //guardamos el title en el dto
-      createRssDtoDB.name=feed.title;
-      //Creamos el objeto
-      const rssCreado = await this.rssModel.create(createRssDtoDB)
-      
-      //creamos el objet
-    try {
-
-      //const rssCreado = await this.rssModel.create(createRssDtoDB);
-     // this.noticiasService.create(feed);
-    
-     feed.items.map(async item => {
-      const noticiasExample = new CreateNoticiaDto();
-      noticiasExample.idRss=rssCreado.id;
-      noticiasExample.titulo = item.title;
-      //cambiamos la fecha
-      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
-      noticiasExample.fecha = formatoFecha
-      noticiasExample.categorias = item.categories;
-      
-      
-      if(item.summary===undefined){
-        noticiasExample.descripcion = "Sin contenido";
-      }else{
-        noticiasExample.descripcion = item.summary;
-      }
-      
-     console.log("xd")
-      noticiasExample.url=  item.link;
-      noticiasExample.html= item.content;
-    //  noticiasExample.html2 = x;
-      //console.log(item.content);
-
-      this.noticiasService.create(noticiasExample);
-      
-      
-    });
-    
-  
-    } catch (error) {
-      console.log(error);
-      throw new BadRequestException('SE NOS CAE EL SERVER ');
-    }
-
-
-
-    return rssCreado;
-      
-    } catch (error) {
-      console.log(error);
-      throw new BadRequestException(`${createRssDtoDB.url} no válida por el parser`);
-    }
-    
+    private readonly newsService: NewsService,
+//    private readonly imageProcessingService: ImageProcessingServiceHandlerService,
+    private readonly httpService: HttpService
+  ) { }
+  // Empezando
+  async create(createRssDto: CreateRssDto) {
    
-  }
-
-  findAll() {
-    return `This action returns all rss`;
-  }
-
-  findOne(id: string) {
-   // this.noticiasService.findAll();
-    return `This action returns a #${id} rss`;
-  }
-
-  update(id: number, updateRssDto: UpdateRssDto) {
-    return `This action updates a #${id} rss`;
-  }
-
-  async remove() {
-   await this.rssModel.deleteMany({});
-   this.noticiasService.remove();
-   return "base de datos borrada";
-  }
-
-  async updateAll(){
+    const rss = await this.rssModel.findOne({ rssUrl: createRssDto.rssUrl });
     /*
-    const rss = await this.rssModel.find();
-    rss.map(async actual =>{
-      const parser = new Parser();
-      const feed = await parser.parseURL(actual.url);
-      
-      feed.items.map( item=>{
-        const noticiasExample = new CreateNoticiaDto();
-        noticiasExample.idRss=actual.id;
-      noticiasExample.titulo = item.title;
-      //cambiamos la fecha
-      const formatoFecha = new Date(item.pubDate).toLocaleDateString();
-      noticiasExample.fecha = formatoFecha
-      noticiasExample.categorias = item.categories;
-      noticiasExample.descripcion = item.summary;
-      noticiasExample.url= item.url;
-      noticiasExample.html= item.content;
-      //console.log(noticiasExample)
-      this.noticiasService.create(noticiasExample);
-    
-    
-
-      })
-    })
+    Validamos primero que el rss no exista antes de intentar parsear la url, ya que lo segundo es un procedimiento más pesado
     */
-   const data = await this.rssModel.find({});
-   return data;
-  
+    if (rss) {
+      throw new BadRequestException('La url ya existe')
+
+    }
+    /*
+      Inicializamos el Rss, de igual forma nos encargamos de validar que el mismo se pueda parsear
+    */
+    const parser = new Parser();
+    let rssMetaData: RssMetaData;
+    let rssItems;
+    
+    try {
+      const rssParser = await parser.parseURL(createRssDto.rssUrl);
+      const { items, ...rssParserData } = rssParser;
+      rssMetaData = {
+        rssUrl: createRssDto.rssUrl,
+        ...rssParserData
+      }
+      rssItems = items;
+
+
+    } catch (error) {
+
+      throw new BadGatewayException('La url introducida no es válida para Rss');
+    }
+   
+    /*
+    Realizamos una segunda validación debido a que puede existir que aunque nosotros realizamos la validación con anterioridad,
+    algún usuario haya insertado un dato, por lo que es importante manejar este error.
+
+    */
+    try {
+      // Guardamos el url del rss
+      const rssSaved = await this.rssModel.create(rssMetaData);
+
+      const itemContent = rssItems[0].content;
+    
+      const itemContentImg = filtrarStringImg(rssItems[0].content);
+      // ! Empezamos a validar las img
+      // Primero validamos que si está el contentSniped
+      let responseArray: Array<any> = [];
+
+      if (itemContent&&itemContentImg) {
+       // this.imageProcessingService.saveImgByHtml()
+     
+        const promiseArray = rssItems.map((rssItem: { content: String; }) => {
+          const rssItemContentFiltered = filtrarStringImg(rssItem.content);
+      
+          const response = firstValueFrom(this.httpService.get(rssItemContentFiltered, { responseType: 'arraybuffer' }));
+          return response;
+        })
+ 
+          responseArray = await Promise.all(promiseArray);
+
+          const rssItemsProcessed = await Promise.all(
+            rssItems.map((item, index:number) => {
+              const imgName = uuidImgGenerator();
+              const filePath = path.join(process.cwd(), '/src/upload', imgName);
+              try {
+                fs.promises.writeFile(filePath, responseArray[index].data);
+              } catch (error) {
+
+              }
+              return {
+                ...item,
+                rss: rssSaved._id,
+                image: imgName,
+
+              }
+            })
+
+          )
+
+          return await this.newsService.createMany(rssItemsProcessed);
+        
+
+      }
+      // !  Imagen por defecto de portada
+
+      // https://feeds.simplecast.com/54nAGcIl
+ 
+      if (rssMetaData.image.url) {
+
+        const response = await firstValueFrom(this.httpService.get(rssMetaData.image.url, { responseType: 'arraybuffer' }));
+
+        const imgName = uuidImgGenerator();
+        const filePath = path.join(process.cwd(), '/src/upload', imgName);
+
+        try {
+          fs.promises.writeFile(filePath, response.data);
+        } catch (error) {
+
+        }
+
+        const data = rssItems.map((item) => {
+          return {
+            ...item,
+            rss: rssSaved._id,
+            image: imgName,
+
+          }
+        })
+
+     
+
+        return await this.newsService.createMany(data);
+
+      }
+
+
+
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);
+      }
+      throw new InternalServerErrorException(`No se logró guardar el rss`);
+    }
+
+
 
   }
+// ! FIUN
+  async findAll() {
+    const rss = await this.rssModel.find({});
+    return rss;
+  }
+  //!Todos estos estarán pendientes 
 
+  async findOne(term: string) {
 
+    const rss = await this.rssModel.findOne({ _id: term })
+
+    if (!rss) {
+      throw new NotFoundException('No se encontró el rss');
+    }
+
+    return rss;
+  }
+// ! UPDATE 
+
+  async update() {
+
+    this.newsService.updateAll()
+    const allrss = await this.rssModel.find({});
+
+    await Promise.all(allrss.map(async (createRssDto)=> {
+
+      const parser = new Parser();
+      let rssMetaData: RssMetaData;
+      let rssItems;
+      
+      try {
+        console.log(createRssDto.link)
+        const rssParser = await parser.parseURL(createRssDto.feedUrl);
+     
+        const { items, ...rssParserData } = rssParser;
+        rssMetaData = {
+          rssUrl: createRssDto.rssUrl,
+          ...rssParserData
+        }
+        rssItems = items;
+  
+  
+      } catch (error) {
+  
+        throw new BadGatewayException('La url introducida no es válida para Rss');
+      }
+     
+      /*
+      Realizamos una segunda validación debido a que puede existir que aunque nosotros realizamos la validación con anterioridad,
+      algún usuario haya insertado un dato, por lo que es importante manejar este error.
+  
+      */
+      try {
+        // Guardamos el url del rss
+        
+  
+        const itemContent = rssItems[0].content;
+      
+        const itemContentImg = filtrarStringImg(rssItems[0].content);
+        // ! Empezamos a validar las img
+        // Primero validamos que si está el contentSniped
+        let responseArray: Array<any> = [];
+  
+        if (itemContent&&itemContentImg) {
+         // this.imageProcessingService.saveImgByHtml()
+       
+          const promiseArray = rssItems.map((rssItem: { content: String; }) => {
+            const rssItemContentFiltered = filtrarStringImg(rssItem.content);
+        
+            const response = firstValueFrom(this.httpService.get(rssItemContentFiltered, { responseType: 'arraybuffer' }));
+            return response;
+          })
+   
+            responseArray = await Promise.all(promiseArray);
+  
+            const rssItemsProcessed = await Promise.all(
+              rssItems.map((item, index:number) => {
+                const imgName = uuidImgGenerator();
+                const filePath = path.join(process.cwd(), '/src/upload', imgName);
+                try {
+                  fs.promises.writeFile(filePath, responseArray[index].data);
+                } catch (error) {
+  
+                }
+                return {
+                  ...item,
+                  rss: createRssDto._id,
+                  image: imgName,
+  
+                }
+              })
+  
+            )
+  
+            return await this.newsService.createMany(rssItemsProcessed);
+          
+  
+        }
+        // !  Imagen por defecto de portada
+  
+        // https://feeds.simplecast.com/54nAGcIl
+   
+        if (rssMetaData.image.url) {
+  
+          const response = await firstValueFrom(this.httpService.get(rssMetaData.image.url, { responseType: 'arraybuffer' }));
+  
+          const imgName = uuidImgGenerator();
+          const filePath = path.join(process.cwd(), '/src/upload', imgName);
+  
+          try {
+            fs.promises.writeFile(filePath, response.data);
+          } catch (error) {
+  
+          }
+  
+          const data = rssItems.map((item) => {
+            return {
+              ...item,
+              rss: createRssDto._id,
+              image: imgName,
+  
+            }
+          })
+  
+       
+  
+          return await this.newsService.createMany(data);
+  
+        }
+  
+  
+  
+      } catch (error) {
+        if (error.code === 11000) {
+          throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);
+        }
+        throw new InternalServerErrorException(`No se logró guardar el rss`);
+      }
+
+    })) 
+   
+
+    
+  }
+
+  async remove(id: string) {
+
+    const rss = await this.findOne(id);
+  //  const {deletedCount} = await this.rssModel.deleteOne({_id: id});
+    if (!rss) {
+      throw new BadRequestException(`El id: ${id} no fue encontrado`);
+    }
+    await this.newsService.deleteAll(id);
+    await this.rssModel.deleteOne({_id:id})
+    
+    return `This action removes a #${id} rss`;
+  }
 }

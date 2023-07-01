@@ -1,23 +1,36 @@
-/* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
 @Schema()
-export class Rss extends Document{
-//el id :string mongo lo da
-@Prop({
-    unique:true,
-    index:true
-})
-    name:string;
+export class Rss extends Document {
 
     @Prop({
         unique:true,
         index:true
     })
-    url:string;
-    //categorías ???
+    rssUrl:string;
+
+    //! Implementado 
+    @Prop()
+    title?:string;
+
+    @Prop()
+    description?: string;
+
+    @Prop()
+    feedUrl?: string;
+
+    @Prop({type:Object})
+    image?: any;
+
+    @Prop({type:Object})
+    itunes?: any;
+
+    @Prop()
+    link?: string;
+
+    @Prop({type:Object})
+    paginationLinks?: any;
 
 }
-
 export const RssSchema = SchemaFactory.createForClass(Rss);

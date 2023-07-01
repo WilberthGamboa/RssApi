@@ -1,26 +1,16 @@
-/* eslint-disable prettier/prettier */
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { RssService } from './rss.service';
-
-import { UpdateRssDto } from './dto/update-rss.dto';
-
 import { CreateRssDto } from './dto/create-rss.dto';
+import { UpdateRssDto } from './dto/update-rss.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('rss')
 export class RssController {
   constructor(private readonly rssService: RssService) {}
 
   @Post()
-  async create(@Body() createRssDtoDB: CreateRssDto) {
-    return this.rssService.create(createRssDtoDB);
+  async create(@Body() createRssDto: CreateRssDto) {
+    return await this.rssService.create(createRssDto);
   }
 
   @Get()
@@ -29,24 +19,22 @@ export class RssController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rssService.findOne(id);
+  findOne(@Param('id',ParseMongoIdPipe) term: string) {
+    return this.rssService.findOne(term);
   }
+
   @Patch()
-  updateAll(){
-    return this.rssService.updateAll();
-    
-    
+  update() {
+     this.rssService.update();
+    return 'test'
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRssDto: UpdateRssDto) {
-    return this.rssService.update(+id, updateRssDto);
+  @Delete(':id')
+  remove(@Param('id',ParseMongoIdPipe) id: string) {
+    return this.rssService.remove(id);
   }
 
-  @Delete('')
-  remove() {
-    return this.rssService.remove();
-  }
+  removeAll(){
 
+  }
 }
