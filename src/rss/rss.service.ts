@@ -163,28 +163,32 @@ export class RssService {
   }
   //!Todos estos estarán pendientes 
 
-  async findOne(term: string, thorwMsg?: string) {
+  async findOne(term: string) {
 
-    const rss = await this.rssModel.findOne({ rssUrl: term })
+    const rss = await this.rssModel.findOne({ _id: term })
 
     if (!rss) {
-      if (!thorwMsg) {
-        throw new NotFoundException('No se encontró el rss');
-      } else {
-        throw new BadRequestException(thorwMsg);
-      }
-
-
+      throw new NotFoundException('No se encontró el rss');
     }
 
     return rss;
   }
 
-  update(id: number, updateRssDto: UpdateRssDto) {
-    return `This action updates a #${id} rss`;
+  update() {
+
+    
   }
 
-  remove(id: number) {
+  async remove(id: string) {
+
+    const rss = await this.findOne(id);
+  //  const {deletedCount} = await this.rssModel.deleteOne({_id: id});
+    if (!rss) {
+      throw new BadRequestException(`El id: ${id} no fue encontrado`);
+    }
+    await this.newsService.deleteAll(id);
+    await this.rssModel.deleteOne({_id:id})
+    
     return `This action removes a #${id} rss`;
   }
 }

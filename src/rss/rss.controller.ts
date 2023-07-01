@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RssService } from './rss.service';
 import { CreateRssDto } from './dto/create-rss.dto';
 import { UpdateRssDto } from './dto/update-rss.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('rss')
 export class RssController {
@@ -17,18 +18,22 @@ export class RssController {
     return this.rssService.findAll();
   }
 
-  @Get(':term')
-  findOne(@Param('term') term: string) {
+  @Get(':id')
+  findOne(@Param('id',ParseMongoIdPipe) term: string) {
     return this.rssService.findOne(term);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRssDto: UpdateRssDto) {
-    return this.rssService.update(+id, updateRssDto);
+  @Patch()
+  update() {
+    return this.rssService.update();
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rssService.remove(+id);
+  remove(@Param('id',ParseMongoIdPipe) id: string) {
+    return this.rssService.remove(id);
+  }
+
+  removeAll(){
+
   }
 }

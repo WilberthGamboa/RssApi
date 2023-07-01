@@ -2,7 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
-import { PaginationDto } from 'src/common/dto/create-common.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { NewsPaginationDto } from './dto/newsPagination.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+
+
 
 @Controller('news')
 export class NewsController {
@@ -10,13 +14,14 @@ export class NewsController {
 
   
   @Get()
-  findAll(@Query() paginationDto:PaginationDto) {
-    console.log(paginationDto)
-    return this.newsService.findAll(paginationDto);
+  findAll(@Query() newsPaginationDto:NewsPaginationDto) {
+
+    return this.newsService.findAll(newsPaginationDto);
   }
+  
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(+id);
+  findOne(@Param('id',ParseMongoIdPipe) id: string) {
+    return this.newsService.findOne(id);
   }
 
   
