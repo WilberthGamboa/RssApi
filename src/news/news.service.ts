@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNewsDto } from './dto/create-news.dto';
-import { UpdateNewsDto } from './dto/update-news.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { News } from './entities/news.entity';
-import { Model, Types } from 'mongoose';
+import  { Model, Types } from 'mongoose';
 import * as fs from 'fs'
-
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { NewsPaginationDto } from './dto/newsPagination.dto';
-import path, { join } from 'path';
+import { join } from 'path';
+import { createAndDeleteFolder } from './helpers/createAndDeleteFolder.helper';
 
 
 @Injectable()
@@ -23,22 +21,24 @@ export class NewsService {
 
   }
   async findAll(newsPaginationDto:NewsPaginationDto) {
-    const {limit = 10, offset = 0,title='',contentSnippet='',creator=''} = newsPaginationDto;
+    const {limit = 10, offset = 0,title='',contentSnippet='',creator='',rss=''} = newsPaginationDto;
+    let test;
 
-  
-    const news = await this.newsModel.find(
-      {
-        $or: [
-          { title: { $regex: title, $options: "i" } },
-          { contentSnippet: { $regex: contentSnippet, $options: "i" } },
-          { creator: { $regex: creator, $options: "i" }}
-        ]
-      
-      }
-    )
-    .limit(limit)
-    .skip(offset)
-    .lean()
+    if (rss !== '') {
+      test = new Types.ObjectId(rss);
+    }
+    
+    const orQuery = [
+      { title: { $regex: title, $options: "i" } },
+      { contentSnippet: { $regex: contentSnippet, $options: "i" } },
+      { creator: { $regex: creator, $options: "i" } }
+    ];
+    
+    const query: any = {
+      $or: orQuery,
+      ...(rss !== '' && { $and: [{ rss: test }] })
+    };
+    const news = await this.newsModel.find(query).limit(limit).skip(offset).lean();
  
     // ! Configurar env 
 
@@ -68,9 +68,14 @@ export class NewsService {
   }
 
   async createMany(createNewsDto: CreateNewsDto[]) {
-    const newsInserted = await this.newsModel.insertMany(createNewsDto)
-  
-    return newsInserted;
+    try {
+     await this.newsModel.insertMany(createNewsDto)
+    
+    } catch (error) {
+      console.log(error)
+    }
+    
+   
   }
 
   async deleteAll(id:string){
@@ -101,13 +106,24 @@ export class NewsService {
    return this.newsModel.deleteMany({rss:new Types.ObjectId(id)})
   }
 
-  async updateAll(){
+
+ 
+
+
+  async removeAllNewsAndImg(){
+    // !Si funciona se puede borrar
+    const path = join(process.cwd(),'/src/upload/');
+    /*
     this.borrarCarpeta(join(process.cwd(),'/src/upload/'));
     this.crearCarpeta(join(process.cwd(),'/src/upload/'));
-    this.newsModel.deleteMany({})
+    */
+    createAndDeleteFolder(join(path));
+    this.newsModel.deleteMany({});
 
   }
-  
+
+  // !Si funciona se puede borrar
+  /*
    borrarCarpeta = (ruta) => {
     if (fs.existsSync(ruta)) {
       fs.readdirSync(ruta).forEach((archivo) => {
@@ -128,5 +144,5 @@ export class NewsService {
       fs.mkdirSync(ruta);
     }
   };
-  
+  */
 }
