@@ -7,12 +7,9 @@ import { Model } from 'mongoose';
 import { RssMetaData } from './interface/rss.interface';
 import { NewsService } from 'src/news/news.service';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import * as fs from 'fs';
-import * as path from 'path';
 import { filtrarStringImg } from './helpers/filtroHtmlImg.helper';
-import { uuidImgGenerator } from './helpers/uuid.helper';
-import { generateImg } from './helpers/generateImg.helper';
+import { RssImageValidation } from './imageProcessingServiceHandler/rssImageValidation.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 // ! Debemos intentar que se separar la lógica de la creación del rss y del new
 @Injectable()
@@ -23,8 +20,8 @@ export class RssService {
     private readonly rssModel: Model<Rss>,
 
     private readonly newsService: NewsService,
-    
-    private readonly httpService: HttpService
+
+    private readonly rssImageValidation: RssImageValidation
   ) { }
   // Empezando
   async create(createRssDto: CreateRssDto) {
@@ -68,43 +65,18 @@ export class RssService {
       // Guardamos el url del rss
       const rssSaved = await this.rssModel.create(rssMetaData);
 
+      /*
+      Aquí procedemos a guardar la información para validar
+      */
       const itemContent = rssItems[0].content;
-
       const itemContentImg = filtrarStringImg(rssItems[0].content);
-      // ! Empezamos a validar las img
-      // Primero validamos que si está el contentSniped
-      let responseArray: Array<any> = [];
+
 
 
       // !VALIDACIÓN 1 IMG
       if (itemContent && itemContentImg) {
-        // this.imageProcessingService.saveImgByHtml()
 
-        const promiseArray = rssItems.map((rssItem: { content: String; }) => {
-          const rssItemContentFiltered = filtrarStringImg(rssItem.content);
-
-          const response = firstValueFrom(this.httpService.get(rssItemContentFiltered, { responseType: 'arraybuffer' }));
-          return response;
-        })
-
-        responseArray = await Promise.all(promiseArray);
-
-        const rssItemsProcessed = await Promise.all(
-          rssItems.map((item, index: number) => {
-            const imgName = uuidImgGenerator();
-            generateImg(responseArray[index].data, imgName);
-
-            return {
-              ...item,
-              rss: rssSaved._id,
-              image: imgName,
-
-            }
-
-          })
-
-        )
-  
+        const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, rssSaved);
         await this.newsService.createMany(rssItemsProcessed);
 
 
@@ -113,19 +85,9 @@ export class RssService {
       // !VALIDACIÓN 2 IMG
 
       if (rssMetaData.image && rssMetaData.image.url) {
-        const response = await firstValueFrom(this.httpService.get(rssMetaData.image.url, { responseType: 'arraybuffer' }));
-        const imgName = uuidImgGenerator();
-        await generateImg(response.data, imgName);
-        const data = rssItems.map((item) => {
-          return {
-            ...item,
-            rss: rssSaved._id,
-            image: imgName,
-
-          }
-        })
-
+        const data = await this.rssImageValidation.rssContent(rssItems, rssSaved, rssMetaData);
         await this.newsService.createMany(data);
+
 
       }
       return rssSaved;
@@ -139,8 +101,9 @@ export class RssService {
 
   }
   // ! FIUN
-  async findAll() {
-    const rss = await this.rssModel.find({});
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const rss = await this.rssModel.find({}).limit(limit).skip(offset);
     return rss;
   }
   //!Todos estos estarán pendientes 
@@ -160,8 +123,6 @@ export class RssService {
   async update() {
 
     this.newsService.removeAllNewsAndImg();
-
-
 
     const allrss = await this.rssModel.find({});
 
@@ -203,75 +164,20 @@ export class RssService {
         let responseArray: Array<any> = [];
 
         if (itemContent && itemContentImg) {
-          // this.imageProcessingService.saveImgByHtml()
-
-          const promiseArray = rssItems.map((rssItem: { content: String; }) => {
-            const rssItemContentFiltered = filtrarStringImg(rssItem.content);
-
-            const response = firstValueFrom(this.httpService.get(rssItemContentFiltered, { responseType: 'arraybuffer' }));
-            return response;
-          })
-
-          responseArray = await Promise.all(promiseArray);
-
-          const rssItemsProcessed = await Promise.all(
-            rssItems.map((item, index: number) => {
-              const imgName = uuidImgGenerator();
-              const filePath = path.join(process.cwd(), '/src/upload', imgName);
-              try {
-                fs.promises.writeFile(filePath, responseArray[index].data);
-              } catch (error) {
-
-              }
-              return {
-                ...item,
-                rss: createRssDto._id,
-                image: imgName,
-
-              }
-            })
-
-          )
-
+          const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, createRssDto)
           return await this.newsService.createMany(rssItemsProcessed);
-
-
         }
         // !  Imagen por defecto de portada
 
-        // https://feeds.simplecast.com/54nAGcIl
 
-        if (rssMetaData.image.url) {
-
-          const response = await firstValueFrom(this.httpService.get(rssMetaData.image.url, { responseType: 'arraybuffer' }));
-
-          const imgName = uuidImgGenerator();
-          const filePath = path.join(process.cwd(), '/src/upload', imgName);
-
-          try {
-            fs.promises.writeFile(filePath, response.data);
-          } catch (error) {
-
-          }
-
-          const data = rssItems.map((item) => {
-            return {
-              ...item,
-              rss: createRssDto._id,
-              image: imgName,
-
-            }
-          })
-
-
-
+        if (rssMetaData.image && rssMetaData.image.url) {
+          const data = await this.rssImageValidation.rssContent(rssItems, createRssDto, rssMetaData);
           return await this.newsService.createMany(data);
 
         }
 
-
-
       } catch (error) {
+        console.log(error);
         if (error.code === 11000) {
           throw new BadRequestException(`El rss ya existe en la db ${JSON.stringify(error.keyValue)}`);
         }
