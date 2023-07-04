@@ -6,7 +6,6 @@ import { Rss } from './entities/rss.entity';
 import { Model } from 'mongoose';
 import { RssMetaData } from './interface/rss.interface';
 import { NewsService } from 'src/news/news.service';
-import { HttpService } from '@nestjs/axios';
 import { filtrarStringImg } from './helpers/filtroHtmlImg.helper';
 import { RssImageValidation } from './imageProcessingServiceHandler/rssImageValidation.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
@@ -39,7 +38,7 @@ export class RssService {
     */
     const parser = new Parser();
     let rssMetaData: RssMetaData;
-    let rssItems;
+    let rssItems:any;
 
     try {
       const rssParser = await parser.parseURL(createRssDto.rssUrl);
@@ -71,14 +70,11 @@ export class RssService {
       const itemContent = rssItems[0].content;
       const itemContentImg = filtrarStringImg(rssItems[0].content);
 
-
-
       // !VALIDACIÓN 1 IMG
       if (itemContent && itemContentImg) {
 
         const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, rssSaved);
         await this.newsService.createMany(rssItemsProcessed);
-
 
       }
 
@@ -100,13 +96,13 @@ export class RssService {
     }
 
   }
-  // ! FIUN
+ 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
     const rss = await this.rssModel.find({}).limit(limit).skip(offset);
     return rss;
   }
-  //!Todos estos estarán pendientes 
+ 
 
   async findOne(term: string) {
 
@@ -118,7 +114,7 @@ export class RssService {
 
     return rss;
   }
-  // ! UPDATE 
+
 
   async update() {
 
@@ -130,10 +126,10 @@ export class RssService {
 
       const parser = new Parser();
       let rssMetaData: RssMetaData;
-      let rssItems;
+      let rssItems:any;
 
       try {
-        console.log(createRssDto.link)
+
         const rssParser = await parser.parseURL(createRssDto.feedUrl);
 
         const { items, ...rssParserData } = rssParser;
@@ -161,7 +157,6 @@ export class RssService {
         const itemContentImg = filtrarStringImg(rssItems[0].content);
         // ! Empezamos a validar las img
         // Primero validamos que si está el contentSniped
-        let responseArray: Array<any> = [];
 
         if (itemContent && itemContentImg) {
           const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, createRssDto)
@@ -185,9 +180,6 @@ export class RssService {
       }
 
     }))
-
-
-
   }
 
   async remove(id: string) {

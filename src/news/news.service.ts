@@ -81,8 +81,6 @@ export class NewsService {
   async deleteAll(id:string){
     const news = await this.newsModel.find({ rss: new Types.ObjectId(id) });
      
-    
-    
       if (news[0].image===news[1].image && news.length>=2 ){
         try {
           fs.promises.access(join(process.cwd(), '/src/upload/', news[0].image));
@@ -107,42 +105,13 @@ export class NewsService {
   }
 
 
- 
-
-
   async removeAllNewsAndImg(){
-    // !Si funciona se puede borrar
+    
     const path = join(process.cwd(),'/src/upload/');
-    /*
-    this.borrarCarpeta(join(process.cwd(),'/src/upload/'));
-    this.crearCarpeta(join(process.cwd(),'/src/upload/'));
-    */
+  
     createAndDeleteFolder(join(path));
     this.newsModel.deleteMany({});
 
   }
 
-  // !Si funciona se puede borrar
-  /*
-   borrarCarpeta = (ruta) => {
-    if (fs.existsSync(ruta)) {
-      fs.readdirSync(ruta).forEach((archivo) => {
-        const archivoRuta = `${ruta}/${archivo}`;
-        if (fs.lstatSync(archivoRuta).isDirectory()) {
-          this.borrarCarpeta(archivoRuta);
-        } else {
-          fs.unlinkSync(archivoRuta);
-        }
-      });
-      fs.rmdirSync(ruta);
-    }
-  };
-  
-  // Función para crear una carpeta
-   crearCarpeta = (ruta) => {
-    if (!fs.existsSync(ruta)) {
-      fs.mkdirSync(ruta);
-    }
-  };
-  */
 }
