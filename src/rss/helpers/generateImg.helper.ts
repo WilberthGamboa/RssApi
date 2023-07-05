@@ -10,7 +10,7 @@ export const generateImg = async (dataBuffer,imgName):Promise<void> =>{
     try {
         fs.writeFile(filePath, dataBuffer);
       } catch (error) {
-
+        console.log(error)
       }
   
 }
