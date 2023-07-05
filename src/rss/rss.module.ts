@@ -6,12 +6,13 @@ import { Rss, RssSchema } from './entities/rss.entity';
 import { NewsService } from 'src/news/news.service';
 import { NewsModule } from 'src/news/news.module';
 import { HttpModule } from '@nestjs/axios';
-import { ImageProcessingServiceHandlerService } from './imageProcessingServiceHandler/imageProcessingServiceHandler.service';
+import { RssImageValidation } from './imageProcessingServiceHandler/rssImageValidation.service';
+
 
 
 @Module({
   controllers: [RssController],
-  providers: [RssService, ImageProcessingServiceHandlerService],
+  providers: [RssService, RssImageValidation],
   imports:[
  
     

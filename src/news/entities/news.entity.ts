@@ -25,9 +25,7 @@ export class News extends Document{
     image?:string;
 
 
-    @Prop({type:Object})
-
-    enclosure?:any;
+   
 
     @Prop({ type: Types.ObjectId, ref: 'Rss' }) // Referencia al modelo de RSS
     rss: Types.ObjectId;

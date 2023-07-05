@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RssService } from './rss.service';
 import { CreateRssDto } from './dto/create-rss.dto';
 import { UpdateRssDto } from './dto/update-rss.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('rss')
 export class RssController {
@@ -14,8 +15,8 @@ export class RssController {
   }
 
   @Get()
-  findAll() {
-    return this.rssService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.rssService.findAll(paginationDto);
   }
 
   @Get(':id')
