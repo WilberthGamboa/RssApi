@@ -29,13 +29,13 @@ export class NewsService {
     }
     
     const orQuery = [
-      { title: title},
-      { contentSnippet: contentSnippet },
-      { creator: creator }
+      { title: { $regex: title, $options: "i" } },
+      { contentSnippet: { $regex: contentSnippet, $options: "i" } },
+      { creator: { $regex: creator, $options: "i" } }
     ];
     
     const query: any = {
-      $or: orQuery,
+      $and: orQuery,
       ...(rss !== '' && { $and: [{ rss: test }] })
     };
     const news = await this.newsModel.find(query).limit(limit).skip(offset).lean();
