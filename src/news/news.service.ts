@@ -29,13 +29,13 @@ export class NewsService {
     }
     
     const regexQuery = (field: string, value: string) => ({
-      [field]: { $regex: value, $options: 'i' },
+      [field]: value !== '' ? { $regex: value, $options: 'i' } : value,
     });
     
     const orQuery = [
-      ...(title !== '' ? [regexQuery('title', title)] : []),
-      ...(contentSnippet !== '' ? [regexQuery('contentSnippet', contentSnippet)] : []),
-      ...(creator !== '' ? [regexQuery('creator', creator)] : []),
+      regexQuery('title', title),
+      regexQuery('contentSnippet', contentSnippet),
+      regexQuery('creator', creator),
     ];
     
     const query: any = {
