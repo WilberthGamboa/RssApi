@@ -126,7 +126,7 @@ export class RssService {
 
   async update() {
 
-    this.newsService.removeAllNewsAndImg();
+    await this.newsService.removeAllNewsAndImg();
 
     const allrss = await this.rssModel.find({});
 
