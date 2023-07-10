@@ -23,26 +23,37 @@ export class NewsService {
   async findAll(newsPaginationDto:NewsPaginationDto) {
     const {limit = 10, offset = 0,title='',contentSnippet='',creator='',rss=''} = newsPaginationDto;
     let test;
-
+    let titulo
+    let contenido
+    let creador
     if (rss !== '') {
       test = new Types.ObjectId(rss);
     }
-    
-    const regexQuery = (field: string, value: string) => ({
-      [field]: value !== '' ? { $regex: value, $options: 'i' } : value,
-    });
-    
+    if (title !== '') {
+      titulo = new Types.ObjectId(title);
+    }else{
+      titulo=''
+    }
+    if (contentSnippet !== '') {
+      contenido = new Types.ObjectId(contentSnippet);
+    }else{
+      contenido=''
+    }
+    if (creator !== '') {
+      creador = new Types.ObjectId(creator);
+    }else{
+      creador=''
+    }
     const orQuery = [
-      regexQuery('title', title),
-      regexQuery('contentSnippet', contentSnippet),
-      regexQuery('creator', creator),
+      { title: { $regex: titulo, $options: "i" } },
+      { contentSnippet: { $regex: contenido, $options: "i" } },
+      { creator: { $regex: creador, $options: "i" } }
     ];
     
     const query: any = {
       $or: orQuery,
-      ...(rss !== '' && { rss: test }),
+      ...(rss !== '' && { $and: [{ rss: test }] })
     };
-    
     const news = await this.newsModel.find(query).limit(limit).skip(offset).lean();
  
     // ! Configurar env 
