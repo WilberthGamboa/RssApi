@@ -23,31 +23,15 @@ export class NewsService {
   async findAll(newsPaginationDto:NewsPaginationDto) {
     const {limit = 10, offset = 0,title='',contentSnippet='',creator='',rss=''} = newsPaginationDto;
     let test;
-    let titulo
-    let contenido
-    let creador
+
     if (rss !== '') {
       test = new Types.ObjectId(rss);
     }
-    if (title !== '') {
-      titulo = new Types.ObjectId(title);
-    }else{
-      titulo=''
-    }
-    if (contentSnippet !== '') {
-      contenido = new Types.ObjectId(contentSnippet);
-    }else{
-      contenido=''
-    }
-    if (creator !== '') {
-      creador = new Types.ObjectId(creator);
-    }else{
-      creador=''
-    }
+    
     const orQuery = [
-      { title: { $regex: titulo, $options: "i" } },
-      { contentSnippet: { $regex: contenido, $options: "i" } },
-      { creator: { $regex: creador, $options: "i" } }
+      { title: title},
+      { contentSnippet: contentSnippet },
+      { creator: creator }
     ];
     
     const query: any = {
