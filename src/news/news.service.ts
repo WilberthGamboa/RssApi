@@ -69,6 +69,7 @@ export class NewsService {
 
   async createMany(createNewsDto: CreateNewsDto[]) {
     try {
+
      await this.newsModel.insertMany(createNewsDto)
     
     } catch (error) {
@@ -110,7 +111,7 @@ export class NewsService {
     const path = join(process.cwd(),'/src/upload/');
   
     createAndDeleteFolder(join(path));
-    this.newsModel.deleteMany({});
+    await this.newsModel.deleteMany({});
 
   }
 

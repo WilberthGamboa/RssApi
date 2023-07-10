@@ -73,16 +73,24 @@ export class RssService {
       // !VALIDACIÓN 1 IMG
       if (itemContent && itemContentImg) {
 
-        const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, rssSaved);
-        await this.newsService.createMany(rssItemsProcessed);
+        try {
+          const rssItemsProcessed = await this.rssImageValidation.contentSnipped(rssItems, rssSaved);
+          await this.newsService.createMany(rssItemsProcessed);
+        } catch (error) {
+          console.log(error)
+        }
 
       }
 
       // !VALIDACIÓN 2 IMG
 
       if (rssMetaData.image && rssMetaData.image.url) {
-        const data = await this.rssImageValidation.rssContent(rssItems, rssSaved, rssMetaData);
-        await this.newsService.createMany(data);
+     try {
+      const data = await this.rssImageValidation.rssContent(rssItems, rssSaved, rssMetaData);
+      await this.newsService.createMany(data);
+     } catch (error) {
+      console.log(error)
+     }
 
 
       }
