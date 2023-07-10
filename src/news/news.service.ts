@@ -28,16 +28,21 @@ export class NewsService {
       test = new Types.ObjectId(rss);
     }
     
+    const regexQuery = (field: string, value: string) => ({
+      [field]: { $regex: value, $options: 'i' },
+    });
+    
     const orQuery = [
-      { title: { $regex: title, $options: "i" } },
-      { contentSnippet: { $regex: contentSnippet, $options: "i" } },
-      { creator: { $regex: creator, $options: "i" } }
+      ...(title !== '' ? [regexQuery('title', title)] : []),
+      ...(contentSnippet !== '' ? [regexQuery('contentSnippet', contentSnippet)] : []),
+      ...(creator !== '' ? [regexQuery('creator', creator)] : []),
     ];
     
     const query: any = {
       $or: orQuery,
-      ...(rss !== '' && { $and: [{ rss: test }] })
+      ...(rss !== '' && { rss: test }),
     };
+    
     const news = await this.newsModel.find(query).limit(limit).skip(offset).lean();
  
     // ! Configurar env 
