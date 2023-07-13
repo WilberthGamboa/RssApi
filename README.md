@@ -6,9 +6,9 @@
 API that stores rss information, processes the news and saves the corresponding images to disk. Developed in nestjs + mongodb + docker 🐱
 
 # Developed
-[NestJS][https://nestjs.com/]
-[MongoDb][https://www.mongodb.com/]
-[Docker][https://www.docker.com/]
+[NestJS](https://nestjs.com/)
+[MongoDb](https://www.mongodb.com/)
+[Docker](https://www.docker.com/)
 ## Installation
 
 ```bash
