@@ -3,7 +3,7 @@
 </p>
 
 ## Description
-API that stores rss information, processes the news and saves the corresponding images to disk. Developed in nestjs + mongodb + docker🐱
+API that stores rss information, processes the news and saves the corresponding images to disk. Developed in nestjs + mongodb + docker 🐱
 
 ## Installation
 
@@ -15,7 +15,6 @@ $ npm install
 
 ```bash
 # start db
-
 $ docker compose up 
 
 # development
