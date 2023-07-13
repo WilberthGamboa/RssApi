@@ -3,7 +3,7 @@
 </p>
 
 ## Description
-API that stores rss information, processes the news and saves the corresponding images to disk. Developed in nestjs + mongodb + docker 🐱
+API that stores rss information, processes the news and saves the corresponding images to disk 🐱
 
 # Developed
 [NestJS](https://nestjs.com/)
@@ -11,6 +11,12 @@ API that stores rss information, processes the news and saves the corresponding 
 [MongoDb](https://www.mongodb.com/)
 
 [Docker](https://www.docker.com/)
+
+# FrontEnd Example 
+You can see an implementation example [here](https://arielfdz.github.io/Fronted-API/index.html#)
+
+you can see the repository [here](https://github.com/ArielFdz/Fronted-API)
+
 
 ## Installation
 
