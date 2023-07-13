@@ -18,13 +18,13 @@ You can see an implementation example [here](https://arielfdz.github.io/Fronted-
 You can see the repository [here](https://github.com/ArielFdz/Fronted-API)
 
 
-## Installation
+# Installation
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+# Running the app
 
 ```bash
 # start db
