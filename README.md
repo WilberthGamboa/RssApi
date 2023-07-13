@@ -2,7 +2,7 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-## Description
+# Description
 API that stores rss information, processes the news and saves the corresponding images to disk 🐱
 
 # Developed
