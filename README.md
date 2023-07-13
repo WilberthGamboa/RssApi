@@ -15,7 +15,7 @@ API that stores rss information, processes the news and saves the corresponding 
 # FrontEnd Example 
 You can see an implementation example [here](https://arielfdz.github.io/Fronted-API/index.html#)
 
-you can see the repository [here](https://github.com/ArielFdz/Fronted-API)
+You can see the repository [here](https://github.com/ArielFdz/Fronted-API)
 
 
 ## Installation
